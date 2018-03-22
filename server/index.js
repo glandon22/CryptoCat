@@ -160,6 +160,16 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     //loop over coin name array and grab the data
+    var coins = req.query.coins.split(',');
+    var response = {};    
+    for (var i = 0; i < coins.length; i++) {
+      /*connection.query("SELECT price FROM coins." + coins[i] + " where date > " + limit, function(err,results,fields) {
+        response[coins[i]] = results;
+      });*/
+      
+    }
+
+    console.log(response);
     
     //load up for loop or map function to make a SQL query for each coin in the query
 
