@@ -145,8 +145,8 @@ app.get('/addCoin', function (req, res) {
 app.get('/changePeriod', function(req,res) {
   const connection = mysql.createConnection({
     host: 'coins.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-    user: 'glandon22',
-    password: 'taylord22',
+    user: 'REDACTED',
+    password: 'REDACTED',
   });
   var limit = findLimit(req.query.time);
   //check to make sure that coin queries isnt empty, if so just return      
