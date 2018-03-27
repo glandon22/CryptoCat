@@ -87,8 +87,8 @@ app.get('/addCoin', function (req, res) {
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
     host: 'coins.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-    user: 'glandon22',
-    password: 'taylord22',
+    user: 'REDACTED',
+    password: 'REDACTED',
   });
 
   connection.connect(function(err) {
