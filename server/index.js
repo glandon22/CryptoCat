@@ -8,41 +8,40 @@ var yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
 var labels = [];
 const mysql = require('mysql');
 
-
 var coinColors = {
-	'Bitcoin': {
+	'btc': {
 		color: '#FF5757'
 	},
-	'BTC Cash': {
+	'bch': {
 		color: '#ABFF57'
 	},
-	'BTC Gold': {
+	'btg': {
 		color: '#57FFFF'
 	},
-	'Litecoin': {
+	'ltc': {
 		color: '#AB57FF'
 	},
-	'Ethereum': {
+	'eth': {
 		color: '#5784FF'
 	},
-	'Dash': {
+	'dash': {
 		color: '#57FF97'
 	},
-	'NEM': {
+	'xem': {
 		color: '#FF57F4'
 	},
-	'Monero': {
+	'xmr': {
 		color: '#FFB657'
 	},
-	'Zcash': {
+	'zec': {
 		color: '#FFFF57'
 	},
-	'Verge': {
+	'xvg': {
 		color: '#001EFF'
 	},
 };
 
-function findLimit(period) {
+function findLimit(period, n) {
     //check to make sure that coin queries isnt empty, if so just return
     if (period === '') {
       return null;
@@ -51,24 +50,28 @@ function findLimit(period) {
     else {
       if (period === '1W') {
         var queryStart = moment().subtract(8, 'days').format('YYYY-MM-DD').toString();
-        return "'" + queryStart + "'" + " LIMIT 7";
+        //return "'" + queryStart + "'" + " LIMIT 7";
+        return [queryStart,"LIMIT " + (7 * n)];
       }
      
       else if (period === '1M') {
         var queryStart = moment().subtract(31, 'days').format('YYYY-MM-DD').toString();
-        return "'" + queryStart + "'" + " LIMIT 30";
+        //return "'" + queryStart + "'" + " LIMIT 30";
+        return [queryStart, "LIMIT " + (30 * n)];
       }
       else if (period === '3M') {
         var queryStart = moment().subtract(91, 'days').format('YYYY-MM-DD').toString();
-        return "'" + queryStart + "'" + " LIMIT 90";
+        //return "'" + queryStart + "'" + " LIMIT 90";
+        return [queryStart, "LIMIT " + (90 * n)];
       }
       else if (period === '1Y') {
         var queryStart = moment().subtract(366, 'days').format('YYYY-MM-DD').toString();
-        return "'" + queryStart + "'" + " LIMIT 365";
+        //return "'" + queryStart + "'" + " LIMIT 365";
+        return [queryStart, "LIMIT " + (365 * n)];
       }
       //time === ALL
       else {
-        return "'0000-00-00' LIMIT 1000000";
+        return ["0000-00-00", "LIMIT 18446744073709551615"];
       } 
     }
   
@@ -82,13 +85,14 @@ app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
 // Answer API requests.
 app.get('/addCoin', function (req, res) {
-  var limit = findLimit(req.query.period);
+  var limit = findLimit(req.query.period, req.query.n);
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
-    host: 'coins.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-    user: 'glandon22',
-    password: 'taylord22',
+    host: '',
+    user: '',
+    password: '',
+    database: ''
   });
 
   connection.connect(function(err) {
@@ -98,8 +102,7 @@ app.get('/addCoin', function (req, res) {
     }
 
     else {
-      var columns = labels.length === 0 ? "DATE_FORMAT(date, '%m/%d/%y'), price" : "price";
-      connection.query("SELECT " + columns + " FROM coins." + coinName + " WHERE date > " + limit, function(err, results, fields) {
+      connection.query("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND (coin='" + coinName + "') " + limit[1], function(err, results, fields) {
         if (err) {
           console.log(err);
           res.send(err);
@@ -107,7 +110,7 @@ app.get('/addCoin', function (req, res) {
 
         else {
           console.log(results);
-          var coinDataStructure = [{
+          var coinDataStructure = {
             label: '',
             data: [],
             backgroundColor:[], 
@@ -117,23 +120,17 @@ app.get('/addCoin', function (req, res) {
             pointHoverBorderColor: 'grey',
             pointRadius: 1,
             pointHoverRadius: 1
-            },
-            {
-              dates: []
-            }
-          ];
-            coinDataStructure[0].label = coinName;
-            coinDataStructure[0].backgroundColor[0] = coinColors[coinName].color;
-            coinDataStructure[0].borderColor = coinColors[coinName].color;
-            coinDataStructure[0].pointHoverBackgroundColor = coinColors[coinName].color;
-            coinDataStructure[0].data = results.map(result => result.price);
-            if (labels.length === 0) {
-              labels = results.map(result => result['DATE_FORMAT(date, \'%m/%d/%y\')']);
-            }
+            };
+            coinDataStructure.label = coinName;
+            coinDataStructure.backgroundColor[0] = coinColors[coinName].color;
+            coinDataStructure.borderColor = coinColors[coinName].color;
+            coinDataStructure.pointHoverBackgroundColor = coinColors[coinName].color;
+            coinDataStructure.data = results.map(result => result.price);
+            labels = results.map(result => result['DATE_FORMAT(date, \'%m/%d/%y\')']);
             
             var finalObject = {
               labels: labels,
-              datasets: [coinDataStructure[0]]
+              datasets: [coinDataStructure]
             };
             res.send(finalObject);
         }
@@ -143,34 +140,64 @@ app.get('/addCoin', function (req, res) {
 });
 
 app.get('/changePeriod', function(req,res) {
-  const connection = mysql.createConnection({
-    host: 'coins.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-    user: 'glandon22',
-    password: 'taylord22',
-  });
-  var limit = findLimit(req.query.time);
   //check to make sure that coin queries isnt empty, if so just return      
   if (req.query.coins === '') {
-    //probably need to move this out to global scope for changePeriod bc i will have to update date every time this gets called$@%^^%$#^%&)(&)_&*(&^%^$%@$%!$!$#%@%^$@++++++++++++++)
-    connection.query("SELECT DATE_FORMAT(date, '%m/%d/%y') FROM coins.NEM where date > " + limit, function(err,results,fields) {
-      labels = results.map(result => result['DATE_FORMAT(date, \'%m/%d/%y\')']);
-    res.send(labels);
-    });
+    console.log('no updates');
+    res.send('no updates');
+    return;
   }
   //check what time period is
   else {
-    //loop over coin name array and grab the data
+    const connection = mysql.createConnection({
+      host: '',
+      user: '',
+      password: '',
+      database: ''
+    });
     var coins = req.query.coins.split(',');
+    var limit = findLimit(req.query.time, coins.length);
+    //loop over coin name array and grab the data
+    
     var response = {};    
+    var coinParams = "(";
     for (var i = 0; i < coins.length; i++) {
-      /*connection.query("SELECT price FROM coins." + coins[i] + " where date > " + limit, function(err,results,fields) {
-        response[coins[i]] = results;
-      });*/
-      
+      if (i === coins.length - 1) {
+        coinParams += "coin='" + coins[i] + "') ";
+        break;
+      }
+
+      coinParams += "coin='" + coins[i] + "' OR ";
     }
 
-    console.log(response);
-    
+    connection.query("SELECT coin, DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND " + coinParams + "ORDER BY coin DESC, date DESC " + limit[1], function(err, results, fields) {
+      if (err) throw err;
+      var currCoin = results[0].coin;
+      var coinDataSets = [];
+      var currCoinData = [];
+      for (var j = 0; j < results.length; j++) {
+        if (j === results.length - 1) {
+          currCoinData.push(results[j].price);
+          coinDataSets.push(currCoinData);
+          console.log('2hit' + j);
+        }
+        
+        else if (results[j].coin === currCoin) {
+          currCoinData.push(results[j].price);
+          console.log('1hit' + j);
+        }
+
+        else {
+          coinDataSets.push(currCoinData);
+          currCoinData = [];
+          currCoinData.push(results[j].price);
+          currCoin = results[j].coin;
+          console.log('3hit' + j);
+        }
+      }
+
+      console.log(coinDataSets);
+    });
+
     //load up for loop or map function to make a SQL query for each coin in the query
 
   //load objects into an array and send back to the front end for integration with my chart

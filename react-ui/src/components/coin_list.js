@@ -4,8 +4,9 @@ const CoinList = (props) => {
     const CoinListItems = props.coins.map((coin) => {
         return (
             <CoinListItem 
-            key={coin}
-            coin={coin}
+            key={coin[1]}
+            coin={coin[0]}
+            symbol={coin[1]}
             addCoin={props.addCoin}
             />
         );

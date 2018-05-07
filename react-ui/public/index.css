@@ -24,43 +24,43 @@ body {
   background-image: none;
 }
 
-.Bitcoin.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Bitcoin.btn-primary:not([disabled]):not(.disabled).active {
+.btc.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.btc.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#FF5757, rgb(155, 53, 53), #FF5757);
 }
 
-.Cash.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Cash.btn-primary:not([disabled]):not(.disabled).active {
+.bch.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.bch.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#ABFF57, #5F9B36, #ABFF57);
 }
 
-.Gold.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Gold.btn-primary:not([disabled]):not(.disabled).active {
+.btg.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.btg.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#57FFFF,#379999,#57FFFF);
 }
 
-.Litecoin.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Litecoin.btn-primary:not([disabled]):not(.disabled).active {
+.ltc.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.ltc.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#AB57FF, #7039A7, #AB57FF);
 }
 
-.Ethereum.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Ethereum.btn-primary:not([disabled]):not(.disabled).active {
+.eth.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.eth.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#5784FF, #3855A5, #5784FF);
 }
 
-.Dash.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Dash.btn-primary:not([disabled]):not(.disabled).active {
+.dash.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.dash.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#57FF97,#3CA865,#57FF97);
 }
 
-.NEM.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.NEM.btn-primary:not([disabled]):not(.disabled).active {
+.xem.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.xem.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#FF57F4,#A73A9F,#FF57F4);
 }
 
-.Monero.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Monero.btn-primary:not([disabled]):not(.disabled).active {
+.xmr.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.xmr.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#FFB657,#A17438,#FFB657);
 }
 
-.Zcash.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Zcash.btn-primary:not([disabled]):not(.disabled).active {
+.zec.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.zec.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#FFFF57,#A0A037,#FFFF57);
 }
 
-.Verge.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.Verge.btn-primary:not([disabled]):not(.disabled).active {
+.xvg.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.xvg.btn-primary:not([disabled]):not(.disabled).active {
   background-image: linear-gradient(#001EFF,#021396,#001EFF);
 }
 

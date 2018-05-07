@@ -12,17 +12,17 @@ class CoinListItem extends Component {
 
     callParent(event) {
         event.preventDefault();
-        this.props.addCoin(this.props.coin);
+        this.props.addCoin(this.props.symbol);
         if (!this.state.clicked) {
             this.setState({
-                        activeClass: 'btn btn-primary active color-override showing ' + this.props.coin,
+                        activeClass: 'btn btn-primary active color-override showing ' + this.props.symbol,
                         clicked: true
                     });
         }
 
         else {
             this.setState({
-                activeClass: 'btn btn-primary active color-override nullClass ' + this.props.coin ,
+                activeClass: 'btn btn-primary active color-override nullClass ' + this.props.symbol ,
                 clicked: false
             });
         }

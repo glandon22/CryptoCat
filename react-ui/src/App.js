@@ -10,7 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coins: ['Bitcoin', 'BTC Cash', 'BTC Gold', 'Litecoin', 'Ethereum', 'Dash', 'NEM', 'Monero', 'Zcash', 'Verge'],
+      coins: [['Bitcoin', 'btc'], ['BTC Cash', 'bch'], ['BTC Gold', 'btg'], ['Litecoin', 'ltc'], ['Ethereum', 'eth'], ['Dash', 'dash'], ['NEM', 'xem'], ['Monero', 'xmr'], ['Zcash', 'zec'], ['Verge', 'xvg']],
       activeCoins: [],
       dateLabels: [],
       coinData: [],
@@ -25,6 +25,7 @@ class App extends Component {
 
   addCoin(data) {
     var newCoins = this.state.activeCoins;
+    //check if coin is already added
     if (newCoins.indexOf(data) !== -1) {
       newCoins.splice(newCoins.indexOf(data), 1);
       //then i need to remove the coin data from the chartjs piece
@@ -39,12 +40,12 @@ class App extends Component {
         }
       }
     }
-
+    //add new coin
     else {
       newCoins.push(data);
       this.setState({activeCoins: newCoins, chartOperation: 'Add Coin'});
       var self = this;
-      axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
+      axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime + '&n=' + newCoins.length).then(function(res) {
         if (self.state.activeCoins.length > 1) {
           var currentChartData = self.state.chartData.datasets.slice();
           currentChartData.map((coin) => {
@@ -69,7 +70,11 @@ class App extends Component {
       this.setState({activeTime: data});
       var self = this;
       axios.get('/changePeriod?time=' + data + '&coins=' + this.state.activeCoins).then(function(res) {
-        //do some shit w the new data
+        if (res.data === 'no updates') {
+          return;
+        }
+        
+        //do something w the new data
         var newChartState = update(self.state.chartData, {labels: {$set: res.data }});
         self.setState({chartData: newChartState});
       });
