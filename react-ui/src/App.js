@@ -73,10 +73,8 @@ class App extends Component {
         if (res.data === 'no updates') {
           return;
         }
-        
-        //do something w the new data
-        var newChartState = update(self.state.chartData, {labels: {$set: res.data }});
-        self.setState({chartData: newChartState});
+
+        self.setState({chartData: res.data});
       });
     }
   }
