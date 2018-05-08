@@ -27,26 +27,7 @@ class Chart extends Component {
                         pointHoverBorderColor: 'grey',
                         pointRadius: 1,
                         pointHoverRadius: 1
-                    },
-                    {
-                        label: 'Litecoin',
-                        data: [
-                            60,
-                            50,
-                            40,
-                            30,
-                            20,
-                            10
-                        ],
-                        backgroundColor:[
-                            'rgba(235, 32, 89, 0.6)'
-                        ], 
-                        fill: false,
-                        borderColor: 'rgba(235, 32, 89, 0.6)',
-                        pointHoverBackgroundColor: 'rgba(235, 32, 89, 0.6)',
-                        pointHoverBorderColor: 'grey',
                     }
-
                 ]
             }
         }

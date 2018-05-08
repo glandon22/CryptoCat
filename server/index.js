@@ -89,10 +89,7 @@ app.get('/addCoin', function (req, res) {
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
-    host: '',
-    user: '',
-    password: '',
-    database: ''
+    //log in info
   });
 
   connection.connect(function(err) {
@@ -118,8 +115,8 @@ app.get('/addCoin', function (req, res) {
             borderColor: '',
             pointHoverBackgroundColor: '',
             pointHoverBorderColor: 'grey',
-            pointRadius: 1,
-            pointHoverRadius: 1
+            pointRadius: 3,
+            pointHoverRadius: 5
             };
             coinDataStructure.label = coinName;
             coinDataStructure.backgroundColor[0] = coinColors[coinName].color;
@@ -149,10 +146,7 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
-      host: '',
-      user: '',
-      password: '',
-      database: ''
+      //log in info
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
@@ -174,33 +168,78 @@ app.get('/changePeriod', function(req,res) {
       var currCoin = results[0].coin;
       var coinDataSets = [];
       var currCoinData = [];
+      var finalObject = {
+        labels: [],
+        datasets: []
+      };
+
       for (var j = 0; j < results.length; j++) {
+        
         if (j === results.length - 1) {
+
+            //add date labels to final object but do so only once
+          if (j < (results.length / coins.length)) {
+            console.log('llllsdfsdfllll')
+            finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
+          }
+
           currCoinData.push(results[j].price);
           coinDataSets.push(currCoinData);
-          console.log('2hit' + j);
+          var coinDataStructure = {
+            label: '',
+            data: [],
+            backgroundColor:[], 
+            fill: false,
+            borderColor: '',
+            pointHoverBackgroundColor: '',
+            pointHoverBorderColor: 'grey',
+            pointRadius: 3,
+            pointHoverRadius: 5
+            };
+            coinDataStructure.label = currCoin;
+            coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
+            coinDataStructure.borderColor = coinColors[currCoin].color;
+            coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
+            coinDataStructure.data = currCoinData;
+            finalObject.datasets.push(coinDataStructure);
         }
         
         else if (results[j].coin === currCoin) {
+          if (j < (results.length / coins.length)) {
+            console.log('llllllll')
+            finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
+          }
           currCoinData.push(results[j].price);
-          console.log('1hit' + j);
         }
 
         else {
+          var coinDataStructure = {
+            label: '',
+            data: [],
+            backgroundColor:[], 
+            fill: false,
+            borderColor: '',
+            pointHoverBackgroundColor: '',
+            pointHoverBorderColor: 'grey',
+            pointRadius: 3,
+            pointHoverRadius: 5
+            };
+            coinDataStructure.label = currCoin;
+            coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
+            coinDataStructure.borderColor = coinColors[currCoin].color;
+            coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
+            coinDataStructure.data = currCoinData;
+            finalObject.datasets.push(coinDataStructure);
+
           coinDataSets.push(currCoinData);
           currCoinData = [];
           currCoinData.push(results[j].price);
           currCoin = results[j].coin;
-          console.log('3hit' + j);
         }
       }
 
-      console.log(coinDataSets);
+      console.log(finalObject);
     });
-
-    //load up for loop or map function to make a SQL query for each coin in the query
-
-  //load objects into an array and send back to the front end for integration with my chart
   }
   
 });
