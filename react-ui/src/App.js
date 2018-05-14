@@ -45,7 +45,7 @@ class App extends Component {
       newCoins.push(data);
       this.setState({activeCoins: newCoins, chartOperation: 'Add Coin'});
       var self = this;
-      axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime + '&n=' + newCoins.length).then(function(res) {
+      axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
         if (self.state.activeCoins.length > 1) {
           var currentChartData = self.state.chartData.datasets.slice();
           currentChartData.map((coin) => {

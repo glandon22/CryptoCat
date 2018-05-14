@@ -80,12 +80,9 @@ function findLimit(period, n) {
 //store date labels for frontend
 var dateLabels = [];
 
-// Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
-
 // Answer API requests.
 app.get('/addCoin', function (req, res) {
-  var limit = findLimit(req.query.period, req.query.n);
+  var limit = findLimit(req.query.period, 1);
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
@@ -169,7 +166,7 @@ app.get('/changePeriod', function(req,res) {
       coinParams += "coin='" + coins[i] + "' OR ";
     }
 
-    connection.query("SELECT coin, DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND " + coinParams + "ORDER BY coin DESC, date DESC " + limit[1], function(err, results, fields) {
+    connection.query("SELECT coin, DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND " + coinParams + "ORDER BY coin ASC, date ASC " + limit[1], function(err, results, fields) {
       if (err) throw err;
       var currCoin = results[0].coin;
       var coinDataSets = [];
@@ -178,14 +175,13 @@ app.get('/changePeriod', function(req,res) {
         labels: [],
         datasets: []
       };
-
+      console.log(limit);
       for (var j = 0; j < results.length; j++) {
         
         if (j === results.length - 1) {
 
             //add date labels to final object but do so only once
           if (j < (results.length / coins.length)) {
-            console.log('llllsdfsdfllll')
             finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
           }
 
@@ -212,7 +208,6 @@ app.get('/changePeriod', function(req,res) {
         
         else if (results[j].coin === currCoin) {
           if (j < (results.length / coins.length)) {
-            console.log('llllllll')
             finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
           }
           currCoinData.push(results[j].price);
@@ -250,11 +245,6 @@ app.get('/changePeriod', function(req,res) {
     });
   }
   
-});
-
-// All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
 });
 
 app.listen(PORT, function () {
