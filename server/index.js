@@ -8,6 +8,23 @@ var yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
 var labels = [];
 const mysql = require('mysql');
 
+//all this will be removed when transferred to heroku, bc mostRecentDataPoint will already be up to date when logic is called
+const connection = mysql.createConnection({
+
+});
+var mostRecentDataPoint;
+connection.query("SELECT date FROM cryptos.coins date ORDER BY date DESC LIMIT 1", function(err, results) {
+  if (err) {
+    console.log(err);
+  }
+
+  else {
+    mostRecentDataPoint = moment(results[0]['date']).format('YYYY-MM-DD');
+  }
+
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var coinColors = {
 	'btc': {
 		color: '#FF5757'
@@ -41,40 +58,36 @@ var coinColors = {
 	},
 };
 
-function findLimit(period, n) {
-    //check to make sure that coin queries isnt empty, if so just return
-    if (period === '') {
-      return null;
+function findLimit(period) {
+  //check to make sure that coin queries isnt empty, if so just return
+  if (period === '') {
+    return null;
+  }
+  //check what time period is
+  else {
+    if (period === '1W') {
+      var queryStart = moment().subtract(7, 'days').format('YYYY-MM-DD').toString();
+      return queryStart;
     }
-    //check what time period is
+   
+    else if (period === '1M') {
+      var queryStart = moment().subtract(30, 'days').format('YYYY-MM-DD').toString();
+      return queryStart;
+    }
+    else if (period === '3M') {
+      var queryStart = moment().subtract(90, 'days').format('YYYY-MM-DD').toString();
+      return queryStart;
+    }
+    else if (period === '1Y') {
+      var queryStart = moment().subtract(365, 'days').format('YYYY-MM-DD').toString();
+      return queryStart;
+    }
+    //time === ALL
     else {
-      if (period === '1W') {
-        var queryStart = moment().subtract(8, 'days').format('YYYY-MM-DD').toString();
-        //return "'" + queryStart + "'" + " LIMIT 7";
-        return [queryStart,"LIMIT " + (7 * n)];
-      }
-     
-      else if (period === '1M') {
-        var queryStart = moment().subtract(31, 'days').format('YYYY-MM-DD').toString();
-        //return "'" + queryStart + "'" + " LIMIT 30";
-        return [queryStart, "LIMIT " + (30 * n)];
-      }
-      else if (period === '3M') {
-        var queryStart = moment().subtract(91, 'days').format('YYYY-MM-DD').toString();
-        //return "'" + queryStart + "'" + " LIMIT 90";
-        return [queryStart, "LIMIT " + (90 * n)];
-      }
-      else if (period === '1Y') {
-        var queryStart = moment().subtract(366, 'days').format('YYYY-MM-DD').toString();
-        //return "'" + queryStart + "'" + " LIMIT 365";
-        return [queryStart, "LIMIT " + (365 * n)];
-      }
-      //time === ALL
-      else {
-        return ["0000-00-00", "LIMIT 18446744073709551615"];
-      } 
-    }
-  
+      return "0000-00-00";
+    } 
+  }
+
 }
 
 //store date labels for frontend
@@ -82,7 +95,7 @@ var dateLabels = [];
 
 // Answer API requests.
 app.get('/addCoin', function (req, res) {
-  var limit = findLimit(req.query.period, 1);
+  var limit = findLimit(req.query.period);
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
@@ -96,7 +109,8 @@ app.get('/addCoin', function (req, res) {
     }
 
     else {
-      connection.query("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND (coin='" + coinName + "') " + limit[1], function(err, results, fields) {
+      console.log("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE (date > '" + limit + " AND date <='" + mostRecentDataPoint + "') AND (coin='" + coinName + "');")
+      connection.query("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE (date > '" + limit + "' AND date <='" + mostRecentDataPoint + "') AND (coin='" + coinName + "');", function(err, results, fields) {
         if (err) {
           console.log(err);
           res.send(err);
@@ -143,6 +157,7 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
+
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
@@ -159,7 +174,7 @@ app.get('/changePeriod', function(req,res) {
       coinParams += "coin='" + coins[i] + "' OR ";
     }
 
-    connection.query("SELECT coin, DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit[0] + "' AND " + coinParams + "ORDER BY coin ASC, date ASC " + limit[1], function(err, results, fields) {
+    connection.query("SELECT coin, DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE date > '" + limit + "' AND date <= '" + mostRecentDataPoint + "' AND " + coinParams + "ORDER BY coin ASC, date ASC;", function(err, results, fields) {
       if (err) throw err;
       var currCoin = results[0].coin;
       var coinDataSets = [];
