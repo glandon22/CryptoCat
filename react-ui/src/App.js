@@ -47,12 +47,41 @@ class App extends Component {
       var self = this;
       axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
         if (self.state.activeCoins.length > 1) {
+          //check to see if current coin history length is longer, shorter, or the same length as the incoming coin history
+
+            //if current coin history is longer than new, i need to add the appropriate amount of null values **at the beginning** of the new data set
+
+            //if the current coin history is shorter than the new, i need to add null values **to the beginning** to all the current coins data AND update the date labels from the new coin
+
+            //if the data sets are the same length i need to add them to the master data holder as usual
+          if (self.state.chartData.datasets[0].data.length > res.data.datasets[0].data.length) {
+            var difference = self.state.chartData.datasets[0].data.length - res.data.datasets[0].data.length;
+            //this is creating an aray of null values within my array of data, so i need to find a way to flatten it out 
+            const nullArray = new Array(difference).fill(null);
+            res.data.datasets[0].data.unshift(nullArray);
+            console.log(nullArray.length);
+            console.log(self.state.chartData.datasets[0].data.length);
+            console.log(res.data.datasets[0].data);
+          }
+
+          else if (self.state.chartData.datasets[0].data.length < res.data.datasets[0].data.length) {
+            console.log('here1');
+          }
+
+          //equal data length 
+          else {
+            console.log('here8');
+          }
+
           var currentChartData = self.state.chartData.datasets.slice();
+          console.log(currentChartData);
           currentChartData.map((coin) => {
             res.data.datasets.push(coin);
           });
           console.log(res.data);
         }
+
+        //first coin being added to chart
         self.setState({chartData: res.data});
       });
     }    
@@ -63,7 +92,7 @@ class App extends Component {
     
     var comparison = this.state.activeTime;
     if (comparison === data) {
-      console.log('fdsdsadsf');
+      console.log('no update to time period');
     }
 
     else {
