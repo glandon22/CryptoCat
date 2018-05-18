@@ -61,7 +61,7 @@ class Chart extends Component {
                                     },
                                     scaleLabel: {
                                         display: true,
-                                        labelString: 'USD',
+                                        labelString: 'USD ($)',
                                         fontSize: 30,
                                         fontColor: 'rgba(255,255,255,0.7)'
                                     }
@@ -77,7 +77,7 @@ class Chart extends Component {
                             },
                             elements: {
                                 line: {
-                                    tension: 0, // disables bezier curves
+                                    //tension: 0, // disables bezier curves
                                 }
                             }
                         }

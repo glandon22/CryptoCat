@@ -28,57 +28,86 @@ class App extends Component {
     //check if coin is already added
     if (newCoins.indexOf(data) !== -1) {
       newCoins.splice(newCoins.indexOf(data), 1);
+      var updatedData;
+      var newChartState
       //then i need to remove the coin data from the chartjs piece
       for (var i = 0; i < this.state.chartData.datasets.length; i++) {
         if (this.state.chartData.datasets[i].label == data) {
-          var updatedData = this.state.chartData.datasets;
+          updatedData = this.state.chartData.datasets;
           updatedData.splice(i,1);
-          var newChartState = update(this.state.chartData, {datasets: {$set: updatedData}});
+          newChartState = update(this.state.chartData, {datasets: {$set: updatedData}});
           this.setState({activeCoins: newCoins, chartData: newChartState});
-          console.log(updatedData);
           break;
         }
       }
+
+      //ALTERNATIVE IDEA
+        //set up one for loop
+        //check if value is null with i for each element in unique dataset
+        //knock of the null value for each dataset
+        //if value isnt null, stop chopping off values, add back null value to any array that came before in that iteration so all data sets are equal length
+        //return
+
+      //init an array to hold length of longest array and its position in dataset array
+      //start for loop to loop over remaining coins
+        //check to see if first value is null, if not, then end loop and dont update further bc data length doesnt need to change
+        //if it is null, filter all null values from array, likely using reduce function
+        //save length of array somewhere so i can find longest array at end
+        //get length of longest array, compare that with length of remaining arrays
+        //fill remaining arrays with null values
+        //load into final object
+        //cut unnecessary dates out of date array
+        //save chartdata
+        
+      var largestDataset = [0, 0];
+      for (var j = 0; j < this.state.chartData.datasets.length; j++) {
+        console.log(updatedData);
+        updatedData[j].data = updatedData[j].data.filter(x=>x);
+        if (updatedData[j].length > largestDataset[0]) {
+          largestDataset = [updatedData[j].length, j];
+        }
+      } 
+      console.log(updatedData);
     }
     //add new coin
     else {
       newCoins.push(data);
-      this.setState({activeCoins: newCoins, chartOperation: 'Add Coin'});
+      this.setState({activeCoins: newCoins});
       var self = this;
       axios.get('/addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
+        //if two coins are added too quickly the self.state.chartdata etc comparison break my code and throw an error bc if hasnt had time to load data and show a length of zero. NEED A FIX#@!#@!@#!#!@
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (self.state.activeCoins.length > 1) {
-          //check to see if current coin history length is longer, shorter, or the same length as the incoming coin history
-
-            //if current coin history is longer than new, i need to add the appropriate amount of null values **at the beginning** of the new data set
-
-            //if the current coin history is shorter than the new, i need to add null values **to the beginning** to all the current coins data AND update the date labels from the new coin
-
-            //if the data sets are the same length i need to add them to the master data holder as usual
           if (self.state.chartData.datasets[0].data.length > res.data.datasets[0].data.length) {
             var difference = self.state.chartData.datasets[0].data.length - res.data.datasets[0].data.length;
-            //this is creating an aray of null values within my array of data, so i need to find a way to flatten it out 
             const nullArray = new Array(difference).fill(null);
             res.data.datasets[0].data.unshift(nullArray);
-            console.log(nullArray.length);
-            console.log(self.state.chartData.datasets[0].data.length);
-            console.log(res.data.datasets[0].data);
+            res.data.datasets[0].data = [].concat.apply([], res.data.datasets[0].data);
+            var preservedLabels = self.state.chartData.labels.slice();
+            res.data.labels = preservedLabels;
+            console.log(res.data);
           }
 
           else if (self.state.chartData.datasets[0].data.length < res.data.datasets[0].data.length) {
             console.log('here1');
-          }
-
-          //equal data length 
-          else {
-            console.log('here8');
+            var difference = res.data.datasets[0].data.length - self.state.chartData.datasets[0].data.length;
+            const nullArray = new Array(difference).fill(null);
+            var currentChartData = self.state.chartData.datasets.slice();
+            currentChartData.map((coin) => {
+              coin.data.unshift(nullArray);
+              console.log(coin);
+              coin.data = [].concat.apply([], coin.data);
+              res.data.datasets.push(coin);
+              self.setState({chartData: res.data});
+            });
+            console.log(res.data);
+            return;
           }
 
           var currentChartData = self.state.chartData.datasets.slice();
-          console.log(currentChartData);
           currentChartData.map((coin) => {
             res.data.datasets.push(coin);
           });
-          console.log(res.data);
         }
 
         //first coin being added to chart
@@ -102,7 +131,6 @@ class App extends Component {
         if (res.data === 'no updates') {
           return;
         }
-
         self.setState({chartData: res.data});
       });
     }
