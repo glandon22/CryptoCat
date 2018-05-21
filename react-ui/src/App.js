@@ -61,13 +61,26 @@ class App extends Component {
         
       var largestDataset = [0, 0];
       for (var j = 0; j < this.state.chartData.datasets.length; j++) {
-        console.log(updatedData);
         updatedData[j].data = updatedData[j].data.filter(x=>x);
-        if (updatedData[j].length > largestDataset[0]) {
-          largestDataset = [updatedData[j].length, j];
+        if (updatedData[j].data.length > largestDataset[0]) {
+          largestDataset = [updatedData[j].data.length, j];
         }
+        console.log(largestDataset);
       } 
+      
+      for (var k = 0; k < this.state.chartData.datasets.length; k++) {
+        if (k === largestDataset[1]) {
+          continue;
+        }
+        console.log(largestDataset[0] - updatedData[k].data.length, largestDataset[0], updatedData[k].data.length);
+        var nullArray = new Array(largestDataset[0] - updatedData[k].data.length).fill(null);
+        var newData = nullArray.concat(updatedData[k].data);
+        updatedData[k].data = newData;
+        
+      }
+      //i need to fix the updatedData var bc it is directly manipulating my chart state. i need to make a new variable to do my changes on.+++++++++++++
       console.log(updatedData);
+      //now i need to get date labels and trim them up. can maybe use .splice w a negative value to grab the dates at the end
     }
     //add new coin
     else {
@@ -140,7 +153,7 @@ class App extends Component {
     return (
       <div className="row padding-top" id="tester">
         <CoinList coins={this.state.coins} addCoin={this.addCoin} />
-        <Chart labels={this.state.dateLabels} coinData={this.state.coinData} chartData={this.state.chartData} />
+        <Chart chartData={this.state.chartData} />
         <div className="col-lg-2 no-padding-right">
           <TimeList 
           timePeriods={this.state.timePeriods} 
