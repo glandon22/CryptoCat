@@ -10,10 +10,7 @@ const mysql = require('mysql');
 
 //all this will be removed when transferred to heroku, bc mostRecentDataPoint will already be up to date when logic is called
 const connection = mysql.createConnection({
-  host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-  user: 'glandon22',
-  password: 'taylord22',
-  database: 'cryptos'
+
 });
 var mostRecentDataPoint;
 connection.query("SELECT date FROM cryptos.coins date ORDER BY date DESC LIMIT 1", function(err, results) {
@@ -102,10 +99,7 @@ app.get('/addCoin', function (req, res) {
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
-    host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-    user: 'glandon22',
-    password: 'taylord22',
-    database: 'cryptos'
+
   });
 
   connection.connect(function(err) {
@@ -163,10 +157,7 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
-      host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
-      user: 'glandon22',
-      password: 'taylord22',
-      database: 'cryptos'
+
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
