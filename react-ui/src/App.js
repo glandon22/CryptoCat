@@ -29,7 +29,7 @@ class App extends Component {
     if (newCoins.indexOf(data) !== -1) {
       newCoins.splice(newCoins.indexOf(data), 1);
       var updatedData;
-      var newChartState
+      var newChartState;
       //then i need to remove the coin data from the chartjs piece
       for (var i = 0; i < this.state.chartData.datasets.length; i++) {
         if (this.state.chartData.datasets[i].label == data) {
@@ -40,24 +40,6 @@ class App extends Component {
           break;
         }
       }
-
-      //ALTERNATIVE IDEA
-        //set up one for loop
-        //check if value is null with i for each element in unique dataset
-        //knock of the null value for each dataset
-        //if value isnt null, stop chopping off values, add back null value to any array that came before in that iteration so all data sets are equal length
-        //return
-
-      //init an array to hold length of longest array and its position in dataset array
-      //start for loop to loop over remaining coins
-        //check to see if first value is null, if not, then end loop and dont update further bc data length doesnt need to change
-        //if it is null, filter all null values from array, likely using reduce function
-        //save length of array somewhere so i can find longest array at end
-        //get length of longest array, compare that with length of remaining arrays
-        //fill remaining arrays with null values
-        //load into final object
-        //cut unnecessary dates out of date array
-        //save chartdata
         
       var largestDataset = [0, 0];
       for (var j = 0; j < this.state.chartData.datasets.length; j++) {
@@ -65,22 +47,23 @@ class App extends Component {
         if (updatedData[j].data.length > largestDataset[0]) {
           largestDataset = [updatedData[j].data.length, j];
         }
-        console.log(largestDataset);
       } 
       
       for (var k = 0; k < this.state.chartData.datasets.length; k++) {
         if (k === largestDataset[1]) {
           continue;
         }
-        console.log(largestDataset[0] - updatedData[k].data.length, largestDataset[0], updatedData[k].data.length);
         var nullArray = new Array(largestDataset[0] - updatedData[k].data.length).fill(null);
         var newData = nullArray.concat(updatedData[k].data);
         updatedData[k].data = newData;
         
       }
-      //i need to fix the updatedData var bc it is directly manipulating my chart state. i need to make a new variable to do my changes on.+++++++++++++
-      console.log(updatedData);
-      //now i need to get date labels and trim them up. can maybe use .splice w a negative value to grab the dates at the end
+      const trimmingDates = this.state.chartData.labels.slice(-largestDataset[0]);
+      const cleanedData = {
+        labels: trimmingDates,
+        datasets: updatedData
+      };
+      this.setState({chartData: cleanedData});
     }
     //add new coin
     else {
@@ -102,7 +85,6 @@ class App extends Component {
           }
 
           else if (self.state.chartData.datasets[0].data.length < res.data.datasets[0].data.length) {
-            console.log('here1');
             var difference = res.data.datasets[0].data.length - self.state.chartData.datasets[0].data.length;
             const nullArray = new Array(difference).fill(null);
             var currentChartData = self.state.chartData.datasets.slice();
@@ -144,6 +126,7 @@ class App extends Component {
         if (res.data === 'no updates') {
           return;
         }
+        console.log(res.data);
         self.setState({chartData: res.data});
       });
     }

@@ -10,7 +10,10 @@ const mysql = require('mysql');
 
 //all this will be removed when transferred to heroku, bc mostRecentDataPoint will already be up to date when logic is called
 const connection = mysql.createConnection({
-
+  host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
+  user: 'glandon22',
+  password: 'taylord22',
+  database: 'cryptos'
 });
 var mostRecentDataPoint;
 connection.query("SELECT date FROM cryptos.coins date ORDER BY date DESC LIMIT 1", function(err, results) {
@@ -99,7 +102,10 @@ app.get('/addCoin', function (req, res) {
   console.log(limit);
   const coinName = req.query.coin;
   const connection = mysql.createConnection({
-
+    host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
+    user: 'glandon22',
+    password: 'taylord22',
+    database: 'cryptos'
   });
 
   connection.connect(function(err) {
@@ -157,7 +163,10 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
-
+      host: 'cryptos.cvndjrqk9gtt.us-east-2.rds.amazonaws.com',
+      user: 'glandon22',
+      password: 'taylord22',
+      database: 'cryptos'
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
@@ -183,11 +192,19 @@ app.get('/changePeriod', function(req,res) {
         labels: [],
         datasets: []
       };
-      console.log(limit);
-      for (var j = 0; j < results.length; j++) {
-        
-        if (j === results.length - 1) {
+      
+      //need to rework this to account for coin data that is of different lengths
+        //first remove the if j < xxx / sss
+        //set up the currcoindata as an object, one key for the numbers another key for the dates
+        //push the price into the number arrray and push date into date array
+        //when coin changes, check to see if my curr date array is longer than the date array stored in labels
+          // if so, replace it w my new date array
+          //if not just ignore
+        //keep going until i hit hte j === res - 1 part
+          //do the same checks over again w longest date array etc and should b correct
 
+      for (var j = 0; j < results.length; j++) {
+        if (j === results.length - 1) {
             //add date labels to final object but do so only once
           if (j < (results.length / coins.length)) {
             finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
