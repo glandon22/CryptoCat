@@ -157,7 +157,7 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
-
+  
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
@@ -194,6 +194,83 @@ app.get('/changePeriod', function(req,res) {
         //keep going until i hit hte j === res - 1 part
           //do the same checks over again w longest date array etc and should b correct
 
+          /**
+           * testing with these vars!!!!
+           */
+      var currCoinObj = {
+        price: [],
+        labels: []
+      };
+
+      for (var j = 0; j < results.length; j++) {
+        //think i am missing a data point being pushed in here to the last coin added
+        if (j === results.length - 1) {
+          var coinDataStructure = {
+            label: '',
+            data: [],
+            backgroundColor:[], 
+            fill: false,
+            borderColor: '',
+            pointHoverBackgroundColor: '',
+            pointHoverBorderColor: 'grey',
+            pointRadius: 3,
+            pointHoverRadius: 5
+          };
+          //fill data structure
+          coinDataStructure.label = currCoin;
+          coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
+          coinDataStructure.borderColor = coinColors[currCoin].color;
+          coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
+          coinDataStructure.data = currCoinObj.price;
+          finalObject.datasets.push(coinDataStructure);
+
+          if (currCoinObj.price.length > finalObject.labels.length) {
+            finalObject.labels = currCoinObj.labels;
+          }
+        }
+        
+        else if (results[j].coin === currCoin) {
+          currCoinObj.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
+          currCoinObj.price.push(results[j].price);
+        }
+
+        else {
+          //initialize data structure for use on front end loading into chart
+          var coinDataStructure = {
+            label: '',
+            data: [],
+            backgroundColor:[], 
+            fill: false,
+            borderColor: '',
+            pointHoverBackgroundColor: '',
+            pointHoverBorderColor: 'grey',
+            pointRadius: 3,
+            pointHoverRadius: 5
+          };
+          //fill data structure
+          coinDataStructure.label = currCoin;
+          coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
+          coinDataStructure.borderColor = coinColors[currCoin].color;
+          coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
+          coinDataStructure.data = currCoinObj.price;
+          finalObject.datasets.push(coinDataStructure);
+
+          if (currCoinObj.price.length > finalObject.labels.length) {
+            finalObject.labels = currCoinObj.labels;
+          }
+
+          //reset currcoinobj and push new values into it
+          currCoinObj = {
+            price: [],
+            labels: []
+          };
+          currCoin = results[j].coin;
+          currCoinObj.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
+          currCoinObj.price.push(results[j].price); 
+        }
+      }
+
+      /**
       for (var j = 0; j < results.length; j++) {
         if (j === results.length - 1) {
             //add date labels to final object but do so only once
@@ -254,6 +331,7 @@ app.get('/changePeriod', function(req,res) {
           currCoin = results[j].coin;
         }
       }
+       */
 
       console.log(finalObject);
       res.send(finalObject);
