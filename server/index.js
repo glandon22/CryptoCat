@@ -157,7 +157,7 @@ app.get('/changePeriod', function(req,res) {
   //check what time period is
   else {
     const connection = mysql.createConnection({
-  
+
     });
     var coins = req.query.coins.split(',');
     var limit = findLimit(req.query.time, coins.length);
@@ -183,16 +183,6 @@ app.get('/changePeriod', function(req,res) {
         labels: [],
         datasets: []
       };
-      
-      //need to rework this to account for coin data that is of different lengths
-        //first remove the if j < xxx / sss
-        //set up the currcoindata as an object, one key for the numbers another key for the dates
-        //push the price into the number arrray and push date into date array
-        //when coin changes, check to see if my curr date array is longer than the date array stored in labels
-          // if so, replace it w my new date array
-          //if not just ignore
-        //keep going until i hit hte j === res - 1 part
-          //do the same checks over again w longest date array etc and should b correct
 
           /**
            * testing with these vars!!!!
@@ -216,6 +206,7 @@ app.get('/changePeriod', function(req,res) {
             pointRadius: 3,
             pointHoverRadius: 5
           };
+          currCoinObj.price.push(results[j].price); 
           //fill data structure
           coinDataStructure.label = currCoin;
           coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
@@ -332,6 +323,13 @@ app.get('/changePeriod', function(req,res) {
         }
       }
        */
+      for (var k = 0; k < finalObject.datasets.length; k++) {
+        if (finalObject.datasets[k].length < finalObject.labels.length) {
+          var difference = finalObject.labels.length - finalObject.datasets[k].length;
+          const nullArray = new Array(difference).fill(null);
+
+        }
+      }
 
       console.log(finalObject);
       res.send(finalObject);
