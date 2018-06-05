@@ -261,73 +261,11 @@ app.get('/changePeriod', function(req,res) {
         }
       }
 
-      /**
-      for (var j = 0; j < results.length; j++) {
-        if (j === results.length - 1) {
-            //add date labels to final object but do so only once
-          if (j < (results.length / coins.length)) {
-            finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
-          }
-
-          currCoinData.push(results[j].price);
-          coinDataSets.push(currCoinData);
-          var coinDataStructure = {
-            label: '',
-            data: [],
-            backgroundColor:[], 
-            fill: false,
-            borderColor: '',
-            pointHoverBackgroundColor: '',
-            pointHoverBorderColor: 'grey',
-            pointRadius: 3,
-            pointHoverRadius: 5
-            };
-            coinDataStructure.label = currCoin;
-            coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
-            coinDataStructure.borderColor = coinColors[currCoin].color;
-            coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
-            coinDataStructure.data = currCoinData;
-            finalObject.datasets.push(coinDataStructure);
-        }
-        
-        else if (results[j].coin === currCoin) {
-          if (j < (results.length / coins.length)) {
-            finalObject.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']);
-          }
-          currCoinData.push(results[j].price);
-        }
-
-        else {
-          var coinDataStructure = {
-            label: '',
-            data: [],
-            backgroundColor:[], 
-            fill: false,
-            borderColor: '',
-            pointHoverBackgroundColor: '',
-            pointHoverBorderColor: 'grey',
-            pointRadius: 3,
-            pointHoverRadius: 5
-            };
-            coinDataStructure.label = currCoin;
-            coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
-            coinDataStructure.borderColor = coinColors[currCoin].color;
-            coinDataStructure.pointHoverBackgroundColor = coinColors[currCoin].color;
-            coinDataStructure.data = currCoinData;
-            finalObject.datasets.push(coinDataStructure);
-
-          coinDataSets.push(currCoinData);
-          currCoinData = [];
-          currCoinData.push(results[j].price);
-          currCoin = results[j].coin;
-        }
-      }
-       */
       for (var k = 0; k < finalObject.datasets.length; k++) {
         if (finalObject.datasets[k].length < finalObject.labels.length) {
           var difference = finalObject.labels.length - finalObject.datasets[k].length;
           const nullArray = new Array(difference).fill(null);
-
+          finalObject.datasets[k].data = finalObject.datasets[k].data.unshift(nullArray); 
         }
       }
 
