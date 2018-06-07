@@ -20,6 +20,7 @@ connection.query("SELECT date FROM cryptos.coins date ORDER BY date DESC LIMIT 1
 
   else {
     mostRecentDataPoint = moment(results[0]['date']).format('YYYY-MM-DD');
+    console.log(mostRecentDataPoint);
   }
 
 });
@@ -206,7 +207,8 @@ app.get('/changePeriod', function(req,res) {
             pointRadius: 3,
             pointHoverRadius: 5
           };
-          currCoinObj.price.push(results[j].price); 
+          currCoinObj.price.push(results[j].price);
+          currCoinObj.labels.push(results[j]['DATE_FORMAT(date, \'%m/%d/%y\')']); 
           //fill data structure
           coinDataStructure.label = currCoin;
           coinDataStructure.backgroundColor[0] = coinColors[currCoin].color;
@@ -260,16 +262,15 @@ app.get('/changePeriod', function(req,res) {
           currCoinObj.price.push(results[j].price); 
         }
       }
-
       for (var k = 0; k < finalObject.datasets.length; k++) {
-        if (finalObject.datasets[k].length < finalObject.labels.length) {
-          var difference = finalObject.labels.length - finalObject.datasets[k].length;
+        if (finalObject.datasets[k].data.length < finalObject.labels.length) {
+          var difference = finalObject.labels.length - finalObject.datasets[k].data.length;
           const nullArray = new Array(difference).fill(null);
-          finalObject.datasets[k].data = finalObject.datasets[k].data.unshift(nullArray); 
+          finalObject.datasets[k].data = nullArray.concat(finalObject.datasets[k].data);
+          console.log('adding null');
         }
       }
 
-      console.log(finalObject);
       res.send(finalObject);
       return false;
     });
