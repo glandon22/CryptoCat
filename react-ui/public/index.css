@@ -2,6 +2,27 @@
   height: 35em;
 }
 
+.loader:empty {
+  position: absolute;
+  top: calc(50% - 4em);
+  left: calc(50% - 4em);
+  width: 6em;
+  height: 6em;
+  border: 1.1em solid rgba(0, 0, 0, 0.2);
+  border-left: 1.1em solid #000000;
+  border-radius: 50%;
+  animation: load8 1.1s infinite linear;
+}
+
+@keyframes load8 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .padding-top {
   padding-top: 5%;
 }
@@ -22,6 +43,10 @@ body {
 
 .btn-primary:not([disabled]):not(.disabled):focus {
   background-image: none;
+}
+
+primary:not([disabled]):not(.disabled).active:hover {
+  background-image: linear-gradient(#ccc, #fff 40%, #333)
 }
 
 .btc.btn-primary:not([disabled]):not(.disabled).active:hover, .showing.btc.btn-primary:not([disabled]):not(.disabled).active {
@@ -65,5 +90,5 @@ body {
 }
 
 .timePeriod.btn-primary:not([disabled]):not(.disabled).active:hover, .currentPeriod.btn-primary:not([disabled]):not(.disabled).active {
-  background-image: linear-gradient(#001EFF,#021396,#001EFF);
+  background-image: linear-gradient(#969696,#6E6E6E,#969696);
 }

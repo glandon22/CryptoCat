@@ -51,6 +51,23 @@ class Chart extends Component {
                     options={
                         {
                             maintainAspectRatio: false,
+                            
+                            legend: {
+                                labels: {
+                                    fontColor: 'rgba(255,255,255,0.7)',
+                                    fontSize: 18
+                                },
+                                onHover: function(e) {
+                                    e.target.style.cursor = 'pointer';
+                                 }
+                            },
+                            hover: {
+                                onHover: function(e) {
+                                   var point = this.getElementAtEvent(e);
+                                   if (point.length) e.target.style.cursor = 'pointer';
+                                   else e.target.style.cursor = 'default';
+                                }
+                             },
                             tooltips: {
                                 mode: 'label'
                               },
@@ -58,6 +75,7 @@ class Chart extends Component {
                                 yAxes: [{
                                     ticks: {
                                         beginAtZero:false,
+                                        fontColor: 'rgba(255,255,255,0.7)'
                                     },
                                     scaleLabel: {
                                         display: true,
@@ -71,8 +89,11 @@ class Chart extends Component {
                                         display: true,
                                         labelString: 'Date',
                                         fontSize: 30,
+                                        fontColor: 'rgba(255,255,255,.7)'
+                                    },
+                                    ticks: {
                                         fontColor: 'rgba(255,255,255,0.7)'
-                                    }
+                                      }
                                 }],
                             },
                             elements: {

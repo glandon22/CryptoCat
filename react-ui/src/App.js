@@ -17,7 +17,8 @@ class App extends Component {
       timePeriods: ['1W', '1M', '3M', '1Y', 'ALL'],
       activeTime: '1W',
       chartData: {
-      }
+      },
+      loading: true
     };
     this.addCoin = this.addCoin.bind(this);
     this.changeTimePeriod = this.changeTimePeriod.bind(this);
@@ -32,7 +33,7 @@ class App extends Component {
       var newChartState;
       //then i need to remove the coin data from the chartjs piece
       for (var i = 0; i < this.state.chartData.datasets.length; i++) {
-        if (this.state.chartData.datasets[i].label == data) {
+        if (this.state.chartData.datasets[i].label === data) {
           updatedData = this.state.chartData.datasets;
           updatedData.splice(i,1);
           newChartState = update(this.state.chartData, {datasets: {$set: updatedData}});
@@ -85,8 +86,8 @@ class App extends Component {
           }
 
           else if (self.state.chartData.datasets[0].data.length < res.data.datasets[0].data.length) {
-            var difference = res.data.datasets[0].data.length - self.state.chartData.datasets[0].data.length;
-            const nullArray = new Array(difference).fill(null);
+            var difference1 = res.data.datasets[0].data.length - self.state.chartData.datasets[0].data.length;
+            const nullArray = new Array(difference1).fill(null);
             var currentChartData = self.state.chartData.datasets.slice();
             currentChartData.map((coin) => {
               coin.data.unshift(nullArray);
@@ -94,13 +95,13 @@ class App extends Component {
               coin.data = [].concat.apply([], coin.data);
               res.data.datasets.push(coin);
               self.setState({chartData: res.data});
+              return false;
             });
-            console.log(res.data);
-            return;
+            
           }
 
-          var currentChartData = self.state.chartData.datasets.slice();
-          currentChartData.map((coin) => {
+          var currentChartData1 = self.state.chartData.datasets.slice();
+          currentChartData1.map((coin) => {
             res.data.datasets.push(coin);
           });
         }
@@ -132,7 +133,17 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    console.log('jhere!');
+    setTimeout(() => this.setState({ loading: false }), 5000); // simulates an async action, and hides the spinner
+  }
+
   render() {
+    const { loading } = this.state;
+    if (loading) {
+      return null;
+    }
+
     return (
       <div className="row padding-top" id="tester">
         <CoinList coins={this.state.coins} addCoin={this.addCoin} />
