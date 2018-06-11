@@ -6,7 +6,7 @@ class CoinListItem extends Component {
         this.callParent = this.callParent.bind(this);
         this.state = {
             clicked: false,
-            activeClass: 'btn btn-primary active color-override nullClass ' + this.props.coin  
+            activeClass: 'btn btn-primary active color-override ' + this.props.coin  
         }
     };
 
@@ -22,7 +22,7 @@ class CoinListItem extends Component {
 
         else {
             this.setState({
-                activeClass: 'btn btn-primary active color-override nullClass ' + this.props.symbol ,
+                activeClass: 'btn btn-primary active color-override ' + this.props.symbol ,
                 clicked: false
             });
         }

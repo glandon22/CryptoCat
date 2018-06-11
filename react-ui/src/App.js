@@ -112,30 +112,51 @@ class App extends Component {
     }    
   }
 
-  changeTimePeriod(data) {
-    console.log(data);
-    
+  changeTimePeriod(data) {    
     var comparison = this.state.activeTime;
     if (comparison === data) {
       console.log('no update to time period');
     }
 
     else {
+      //localStorage.setItem('timePeriod', JSON.stringify(data));
+      var storedData = JSON.parse(localStorage.getItem('data'));
+      storedData.timePeriod = data;
+      localStorage.setItem('data', JSON.stringify(storedData));
       this.setState({activeTime: data});
       var self = this;
       axios.get('/changePeriod?time=' + data + '&coins=' + this.state.activeCoins).then(function(res) {
         if (res.data === 'no updates') {
           return;
         }
-        console.log(res.data);
         self.setState({chartData: res.data});
       });
     }
   }
 
   componentDidMount() {
-    console.log('jhere!');
-    setTimeout(() => this.setState({ loading: false }), 5000); // simulates an async action, and hides the spinner
+    /**
+     * var timePeriod = JSON.parse(localStorage.getItem('timePeriod'));
+    //this.setState({activeTime: timePeriod});
+    var previouslyActiveCoins = JSON.parse(localStorage.getItem('activeCoins'));
+     * 
+     */
+    var storedData = JSON.parse(localStorage.getItem('data'));
+    if (!storedData) {
+      var defaultSettings = JSON.stringify({
+        timePeriod: '1W',
+        activeCoins: ['btc']
+      });
+      localStorage.setItem('data', defaultSettings);
+      var self = this;
+      axios.get('/addCoin?period=1W&coin=btc').then(function(res) {
+        if (res.data === 'no updates') {
+          return;
+        }
+        self.setState({chartData: res.data, activeCoins: ['btc'], loading: false});
+      });
+    }
+    this.setState({ loading: false });
   }
 
   render() {
@@ -146,7 +167,7 @@ class App extends Component {
 
     return (
       <div className="row padding-top" id="tester">
-        <CoinList coins={this.state.coins} addCoin={this.addCoin} />
+        <CoinList coins={this.state.coins} addCoin={this.addCoin} selectedCoins={this.state.activeCoins} />
         <Chart chartData={this.state.chartData} />
         <div className="col-lg-2 no-padding-right">
           <TimeList 

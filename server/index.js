@@ -110,7 +110,6 @@ app.get('/addCoin', function (req, res) {
     }
 
     else {
-      console.log("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE (date > '" + limit + " AND date <='" + mostRecentDataPoint + "') AND (coin='" + coinName + "');")
       connection.query("SELECT DATE_FORMAT(date, '%m/%d/%y'), price FROM cryptos.coins WHERE (date > '" + limit + "' AND date <='" + mostRecentDataPoint + "') AND (coin='" + coinName + "');", function(err, results, fields) {
         if (err) {
           console.log(err);

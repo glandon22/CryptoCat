@@ -2,6 +2,8 @@ import React from 'react';
 import CoinListItem from './coin_list_item';
 const CoinList = (props) => {
     const CoinListItems = props.coins.map((coin) => {
+        //var selected = props.selectedCoins.indexOf(coin[1]);
+        console.log(props);
         return (
             <CoinListItem 
             key={coin[1]}
