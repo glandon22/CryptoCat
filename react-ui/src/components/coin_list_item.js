@@ -5,8 +5,8 @@ class CoinListItem extends Component {
         super(props);
         this.callParent = this.callParent.bind(this);
         this.state = {
-            clicked: false,
-            activeClass: 'btn btn-primary active color-override ' + this.props.coin  
+            clicked: this.props.selectedOnRender ? true : false,
+            activeClass: 'btn btn-primary active color-override ' + this.props.symbol + this.props.selectedOnRender 
         }
     };
 

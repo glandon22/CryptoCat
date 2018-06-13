@@ -135,12 +135,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    /**
-     * var timePeriod = JSON.parse(localStorage.getItem('timePeriod'));
-    //this.setState({activeTime: timePeriod});
-    var previouslyActiveCoins = JSON.parse(localStorage.getItem('activeCoins'));
-     * 
-     */
     var storedData = JSON.parse(localStorage.getItem('data'));
     if (!storedData) {
       var defaultSettings = JSON.stringify({
@@ -156,7 +150,30 @@ class App extends Component {
         self.setState({chartData: res.data, activeCoins: ['btc'], loading: false});
       });
     }
-    this.setState({ loading: false });
+
+    else {
+      var self = this;
+      if (storedData.activeCoins.length === 1) {
+        axios.get('/addCoin?period=' + storedData.timePeriod + '&coin=' + storedData.activeCoins).then(function(res) {
+          if (res.data === 'no updates') {
+            return;
+          }
+          self.setState({chartData: res.data, activeCoins: storedData.activeCoins, activeTime: storedData.timePeriod, loading: false});
+        });
+      }
+
+      else {
+        axios.get('/changePeriod?time=' + storedData.timePeriod + '&coins=' + storedData.activeCoins).then(function(res) {
+          if (res.data === 'no updates') {
+            return;
+          }
+          self.setState({chartData: res.data, activeCoins: storedData.activeCoins, activeTime: storedData.timePeriod, loading: false});
+        });
+      }
+
+      //this.setState({activeTime: storedData.timePeriod, activeCoins: storedData.activeCoins, loading: false});
+    }
+    
   }
 
   render() {
