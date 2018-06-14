@@ -28,6 +28,10 @@ class App extends Component {
     var newCoins = this.state.activeCoins;
     //check if coin is already added
     if (newCoins.indexOf(data) !== -1) {
+      //prevent users from removing all coins from chart
+      if (newCoins.length === 1) {
+        return false;
+      }
       newCoins.splice(newCoins.indexOf(data), 1);
       var updatedData;
       var newChartState;
@@ -65,6 +69,9 @@ class App extends Component {
         datasets: updatedData
       };
       this.setState({chartData: cleanedData});
+      var localData = JSON.parse(localStorage.getItem('data'));
+      localData.activeCoins = newCoins;
+      localStorage.setItem('data', JSON.stringify(localData));
     }
     //add new coin
     else {
@@ -109,6 +116,9 @@ class App extends Component {
         //first coin being added to chart
         self.setState({chartData: res.data});
       });
+      var localData = JSON.parse(localStorage.getItem('data'));
+      localData.activeCoins = newCoins;
+      localStorage.setItem('data', JSON.stringify(localData));
     }    
   }
 

@@ -28,6 +28,10 @@ class CoinListItem extends Component {
         }
         
     }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
+    }
     
     render() {
         return (
