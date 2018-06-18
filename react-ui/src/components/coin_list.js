@@ -10,6 +10,7 @@ const CoinList = (props) => {
             symbol={coin[1]}
             addCoin={props.addCoin}
             selectedOnRender={selected}
+            selectedCoins={props.selectedCoins.length}
             />
         );
     });

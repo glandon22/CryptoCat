@@ -21,6 +21,10 @@ class CoinListItem extends Component {
         }
 
         else {
+            if (this.props.selectedCoins === 1) {
+                return false;
+            }
+            
             this.setState({
                 activeClass: 'btn btn-primary active color-override ' + this.props.symbol ,
                 clicked: false
