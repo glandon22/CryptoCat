@@ -78,7 +78,7 @@ class App extends Component {
       newCoins.push(data);
       this.setState({activeCoins: newCoins});
       var self = this;
-      axios.get('https://stock-server777.herokuapp.com//addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
+      axios.get('https://stock-server777.herokuapp.com/addCoin?coin=' + data + '&period=' + this.state.activeTime).then(function(res) {
         //if two coins are added too quickly the self.state.chartdata etc comparison break my code and throw an error bc if hasnt had time to load data and show a length of zero. NEED A FIX#@!#@!@#!#!@
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (self.state.activeCoins.length > 1) {
@@ -135,7 +135,7 @@ class App extends Component {
       localStorage.setItem('data', JSON.stringify(storedData));
       this.setState({activeTime: data});
       var self = this;
-      axios.get('https://stock-server777.herokuapp.com//changePeriod?time=' + data + '&coins=' + this.state.activeCoins).then(function(res) {
+      axios.get('https://stock-server777.herokuapp.com/changePeriod?time=' + data + '&coins=' + this.state.activeCoins).then(function(res) {
         if (res.data === 'no updates') {
           return;
         }
@@ -153,7 +153,7 @@ class App extends Component {
       });
       localStorage.setItem('data', defaultSettings);
       var self = this;
-      axios.get('https://stock-server777.herokuapp.com//addCoin?period=1W&coin=btc').then(function(res) {
+      axios.get('https://stock-server777.herokuapp.com/addCoin?period=1W&coin=btc').then(function(res) {
         if (res.data === 'no updates') {
           return;
         }
@@ -164,7 +164,7 @@ class App extends Component {
     else {
       var self = this;
       if (storedData.activeCoins.length === 1) {
-        axios.get('https://stock-server777.herokuapp.com//addCoin?period=' + storedData.timePeriod + '&coin=' + storedData.activeCoins).then(function(res) {
+        axios.get('https://stock-server777.herokuapp.com/addCoin?period=' + storedData.timePeriod + '&coin=' + storedData.activeCoins).then(function(res) {
           if (res.data === 'no updates') {
             return;
           }
@@ -173,7 +173,7 @@ class App extends Component {
       }
 
       else {
-        axios.get('https://stock-server777.herokuapp.com//changePeriod?time=' + storedData.timePeriod + '&coins=' + storedData.activeCoins).then(function(res) {
+        axios.get('https://stock-server777.herokuapp.com/changePeriod?time=' + storedData.timePeriod + '&coins=' + storedData.activeCoins).then(function(res) {
           if (res.data === 'no updates') {
             return;
           }
